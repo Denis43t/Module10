@@ -12,33 +12,46 @@ public class FileConvertorToJson {
 
     private File file = new File("src/main/resources/file.txt");
 
-    private List<UserDto> users =new ArrayList<>();
+    private List<UserDto> users = new ArrayList<>();
 
-    private void convertFromFile() {
-        if (this.file.exists()) {
-            try (InputStream fis = new FileInputStream(this.file);
-                 Scanner scanner = new Scanner(fis)) {
-                fis.skip(10);
-                while (scanner.hasNext()) {
-                    String line = scanner.nextLine();
-                    String[] spiltedinfo=line.split("\s");
-                    String name=spiltedinfo[0];
-                    int age=Integer.valueOf(spiltedinfo[1]);
-                    this.users.add(new UserDto(name,age));
-                }
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+    private String convertToString() {
+        String text = "";
+        try (InputStream fis = new FileInputStream(this.file);) {
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            for (int i = 0; i < buffer.length; i++) {
+                text += (char) buffer[i];
             }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return text;
+    }
+
+    private void getPeopleFromText() {
+        if (this.file.exists()) {
+            String text=convertToString();
+            text=text.replaceAll("name"," ");
+            text=text.replaceAll("age"," ");
+            text=text.replaceAll("\n|\r"," ");
+            String[] spiltedinfo = text.split("\s+");
+            for (int i = spiltedinfo.length-1; i > 0; i-=2) {
+                String name = spiltedinfo[i-1];
+                int age = Integer.valueOf(spiltedinfo[i]);
+                this.users.add(new UserDto(name, age));
+            }
+
         }
     }
-    public void convertToJson(){
-        convertFromFile();
-        Gson gson=new GsonBuilder().setPrettyPrinting().create();
-        String json=gson.toJson(users);
+
+    public void convertToJson() {
+        getPeopleFromText();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(users);
         try {
-            OutputStream fos=new FileOutputStream("user.json");
+            OutputStream fos = new FileOutputStream("user.json");
             fos.write(json.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);

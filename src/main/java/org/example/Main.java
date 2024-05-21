@@ -6,11 +6,11 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-//        PhoneValidator phoneValidator=new PhoneValidator();
-//        phoneValidator.validPhone();
+        PhoneValidator phoneValidator=new PhoneValidator();
+        phoneValidator.validPhone();
 //        WordCounter wordCounter=new WordCounter();
 //        wordCounter.countWord();
-        FileConvertorToJson fileConvertorToJson=new FileConvertorToJson();
-        fileConvertorToJson.convertToJson();
+//        FileConvertorToJson fileConvertorToJson=new FileConvertorToJson();
+//        fileConvertorToJson.convertToJson();
     }
 }
